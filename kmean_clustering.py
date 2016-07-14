@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import numpy as np
 from edit_distance import stringdist
-from temp import kmeans
+from kmean_lib import kmeans
 # from temp import kmeans
 
 # import numpy as np
