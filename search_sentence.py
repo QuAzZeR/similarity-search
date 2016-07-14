@@ -53,7 +53,7 @@ def review_to_sentences( review, tokenizer, remove_stopwords=False ):
     #
     # Return the list of sentences (each sentence is a list of words,
     # so this returns a list of lists
-    return sentences
+    return raw_sentences,sentences
 
 def find_same_cluster(search_sentence,type_cluster = 3):
     cnx = mysql.connector.connect(user='root', password='',
@@ -126,24 +126,44 @@ def cosine_distance(q1,q2):
 # print (y)
 # print (cosine_distance(x,y))
 #
-tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
-# train = pd.read_csv( "./TEST_WORD2VEC/labeledTrainData.tsv", header=0, delimiter="\t", quoting=3 )
-train = open('../Data/pg25990.txt','r')
-train = train.read()
-# print (train["review"][1]+"\n")
-# z = "use products from cattle for shelter and food. use products from cattle for fod."
-z = review_to_sentences(train,tokenizer,remove_stopwords=True)
-x = find_same_cluster(z[0],3)
-cos_dist = []
-for i in z:
-    y = find_same_cluster(i,3)
-    cos_dist.append((i,1-cosine_distance(x,y)))
-# x = find_same_cluster(,4)
-# print (x)
+def read_from_file(path_of_file):
 
-# print (y)
-# print (len(intersection(x,y))/len(review_to_sentences(z,tokenizer,remove_stopwords=True)[0]))
-# print (intersection(x,y))
-cos_dist = sorted(cos_dist,key = lambda x: x[1],reverse = True)
-for i in range(4):
-    print (cos_dist[i])
+    f = open(path_of_file,'r')
+    data = f.read()
+    return data
+
+def get_word_to_list(path_of_file):
+    tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
+    data = read_from_file(path_of_file)
+    sentences , list_of_sentences = review_to_sentences(data,tokenizer,remove_stopwords=True)
+    return sentences,list_of_sentences
+
+def print_(cosine_dist,topn = 3):
+    for i in range(topn):
+        print (cosine_dist[i])
+
+def main():
+
+    path_of_file = '../Data/pg25990.txt'
+    sentences, list_of_sentences = get_word_to_list(path_of_file)
+    x = find_same_cluster(list_of_sentences[0],3)
+    print ("SEARCH SENTENCE = "+sentences[0])
+    cos_dist = []
+    for i in range(len(list_of_sentences)):
+        y = find_same_cluster(list_of_sentences[i],3)
+        cos_dist.append((sentences[i],1-cosine_distance(x,y)))
+    # x = find_same_cluster(,4)
+    # print (x)
+
+    # print (y)
+    # print (len(intersection(x,y))/len(review_to_sentences(z,tokenizer,remove_stopwords=True)[0]))
+    # print (intersection(x,y))
+
+    cos_dist = sorted(cos_dist,key = lambda x: x[1],reverse = True)
+    print_(cos_dist)
+
+
+
+if __name__ == "__main__":
+
+    main()
