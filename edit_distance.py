@@ -7,6 +7,7 @@ def intersection(x,y):
                 same.append(x[i])
                 break
     return same
+
 def union(x,y):
     same = []
     for i in range(len(x)):
@@ -18,7 +19,7 @@ def union(x,y):
     return same
 
 def qgram(str1,q=1):
-    return [str1[i:i+q] for i in range(0,len(str1),q)]
+    return [str1[i:i+q] for i in range(0,len(str1)) if i+q <= len(str1)]
 
 def qgram_distance(q1,q2):
     gxuniongy = (q1) + (q2)
@@ -26,6 +27,7 @@ def qgram_distance(q1,q2):
     distance = len(gxuniongy)-2*len(gxintersecgy)
     norm_dist = (distance/(len(gxuniongy)-len(gxintersecgy)))
     return norm_dist
+
 def cosine_distance(q1,q2):
     qgramI = len(intersection(q1,q2))*1.0
     # print q1,q2
@@ -37,6 +39,7 @@ def cosine_distance(q1,q2):
         return distance
     except:
         return 1.0
+
 def jaccard_distance(q1,q2):
     qgramU = len(union(q1,q2))*1.0
     qgramI = len(intersection(q1,q2))*1.0
@@ -112,37 +115,38 @@ def jw_distance(str1,str2,p):
         return dw
     except:
         return "Infinity"
-def word2vec(word):
-    from collections import Counter
-    from math import sqrt
+# def word2vec(word):
+#     from collections import Counter
+#     from math import sqrt
+#
+#     # count the characters in word
+#     cw = Counter(word)
+#     # precomputes a set of the different characters
+#     sw = set(cw)
+#     # precomputes the "length" of the word vector
+#     lw = sqrt(sum(c*c for c in cw.values()))
+#
+#     # return a tuple
+#     return cw, sw, lw
+#
+# def cosdis(str1, str2):
+#     # which characters are common to the two words?
+#     v1 = word2vec(str1)
+#     v2 = word2vec(str2)
+#
+#     common = v1[1].intersection(v2[1])
+#     distance = sum(v1[0][ch]*v2[0][ch] for ch in common)/v1[2]/v2[2]
+#     # if str1.lower() == str2.lower() and str1 != str2:
+#     #     return distance+0.05
+#     # by definition of cosine distance we have
+#     return sum(v1[0][ch]*v2[0][ch] for ch in common)/v1[2]/v2[2]
 
-    # count the characters in word
-    cw = Counter(word)
-    # precomputes a set of the different characters
-    sw = set(cw)
-    # precomputes the "length" of the word vector
-    lw = sqrt(sum(c*c for c in cw.values()))
-
-    # return a tuple
-    return cw, sw, lw
-
-def cosdis(str1, str2):
-    # which characters are common to the two words?
-    v1 = word2vec(str1)
-    v2 = word2vec(str2)
-
-    common = v1[1].intersection(v2[1])
-    distance = sum(v1[0][ch]*v2[0][ch] for ch in common)/v1[2]/v2[2]
-    # if str1.lower() == str2.lower() and str1 != str2:
-    #     return distance+0.05
-    # by definition of cosine distance we have
-    return sum(v1[0][ch]*v2[0][ch] for ch in common)/v1[2]/v2[2]
 
 
-
-def stringdist(str1,str2,method,q,p=0):
+def stringdist(str1,str2,method='cosine',q=1,p=0):
     q1 = qgram(str1,q)
     q2 = qgram(str2,q)
+    print(q1,q2)
     if(method == "jaccard"):
         return str2,jaccard_distance(q1,q2)
     elif(method == "cosine"):
@@ -154,6 +158,7 @@ def stringdist(str1,str2,method,q,p=0):
         return str2,ed_dynp(str1,str2)
     elif(method =="jw"):
         return str2,jw_distance(str1,str2,p)
+
 
 
 
