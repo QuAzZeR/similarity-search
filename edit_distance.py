@@ -146,7 +146,7 @@ def jw_distance(str1,str2,p):
 def stringdist(str1,str2,method='cosine',q=1,p=0):
     q1 = qgram(str1,q)
     q2 = qgram(str2,q)
-    print(q1,q2)
+    # print(q1,q2)
     if(method == "jaccard"):
         return str2,jaccard_distance(q1,q2)
     elif(method == "cosine"):
