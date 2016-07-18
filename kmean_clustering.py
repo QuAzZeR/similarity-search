@@ -12,6 +12,7 @@ import numpy as np
 import multiprocessing as mp
 import os
 from sentence_lib import remove_stopword
+import time
 
 
 
@@ -54,7 +55,7 @@ def kmean_clustering(args):
 
     compare_word = args[0]
     word_distance = [(0,args[1][i]) for i in range(len(args[1]))]
-    print(word_distance)
+    # print(word_distance)
     # print(word_distance)
     # print(compare_word+' word_distance  = '+str(len(word_distance)))
     # word_distance = []
@@ -81,7 +82,7 @@ def kmean_clustering(args):
         # print(2)
         silhouette_avg = silhouette_score(X, cluster_labels)
         # print(3)
-        print (Max,silhouette_avg,count)
+        # print (Max,silhouette_avg,count)
         if Max < silhouette_avg:
             Max = silhouette_avg
             index = n_clusters
@@ -151,8 +152,12 @@ def main():
     #     print (i[2][1])
     word_distance = [i[2] for i in temp]
     list_for_kmean_clustering = [(list_of_words[i],word_distance[i]) for i in range(len(word_distance))]
-    for i in list_for_kmean_clustering[0:10]:
-        kmean_clustering(i)
+    time.sleep(10.0)
+    pool = mp.Pool(2)
+    # for j in
+    pool.map(kmean_clustering,list_for_kmean_clustering)
+    # for i in list_for_kmean_clustering[0:10]:
+    #     kmean_clustering(i)
     # pool = mp.Pool(2)
     # pool.map(kmean_clustering,list_for_kmean_clustering)
     # for i in range(len(list_for_kmean_clustering)):
