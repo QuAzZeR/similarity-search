@@ -19,6 +19,7 @@ def union(x,y):
     return same
 
 def qgram(str1,q=1):
+    str1 = str1.lower()
     return [str1[i:i+q] for i in range(0,len(str1)) if i+q <= len(str1)]
 
 def qgram_distance(q1,q2):
