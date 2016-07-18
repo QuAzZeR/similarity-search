@@ -41,9 +41,9 @@ def document_to_sentences( document, tokenizer, remove_stopwords=False ):
 
     return raw_sentences,sentences
 
-def get_word_to_list(sentence):
+def get_word_from_document(document):
 
     # data = read_from_file(path_of_file)
-    data = sentence
+    data = document
     sentences , list_of_sentences = document_to_sentences(data,tokenizer,remove_stopwords=True)
     return sentences,list_of_sentences

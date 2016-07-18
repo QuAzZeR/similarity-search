@@ -7,7 +7,7 @@ import time
 
 from clustering_lib import find_cluster
 from edit_distance import stringdist
-from sentence_lib import get_word_to_list
+from sentence_lib import get_word_from_document
 word_distance1 = mp.Queue()
 word_distance2 = mp.Queue()
 
@@ -83,14 +83,14 @@ def cal_distant_parallel(args):
 def main():
     # print(os.getpid())
     # path_of_file = '../Data/pg25990.txt'
-    list_of_sentences_encoding = read_from_file('./text_x')
+    list_of_sentences_encoding = read_from_file('./test_prepare5000')
     # print (len(list_of_sentences_encoding))
     pool = mp.Pool(mp.cpu_count())
     number_of_sentence = len(list_of_sentences_encoding)
 
 
     search_sentence = input()
-    sentence, sentence_with_word = get_word_to_list(search_sentence)
+    sentence, sentence_with_word = get_word_from_document(search_sentence)
     # print(sentence,sentence_with_word)
     search_sentence_with_encoding = find_cluster(sentence_with_word[0],4)
     list_for_parallel = [(search_sentence_with_encoding,i) for i in list_of_sentences_encoding]
@@ -111,7 +111,7 @@ def main():
     # for i in list_of_distance:
     #     print (i)
 
-    # sentences, list_of_sentences = get_word_to_list(path_of_file)
+    # sentences, list_of_sentences = get_word_from_document(path_of_file)
     # x = find_cluster(list_of_sentences[1],4)
     # print(len(sentences))
     # print ("SEARCH SENTENCE = "+sentences[1])
