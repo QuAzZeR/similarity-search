@@ -47,9 +47,11 @@ def main():
         # read_from_file(list_name_of_file[0])
         # read_from_db(list_name_of_file)
 
-        print("NUMBER OF FILE = "+str(len(list_name_of_file)))
+        print("NUMBER OF DOCUMENT = "+str(len(list_name_of_file)))
         pool = mp.Pool(mp.cpu_count())
+        print("DOCUMENT FROM FILE")
         pool.map(read_from_db,list_name_of_file)
+        print("DOCUMENT FROM DATABASE")
         #pool.map(read_from_file,list_name_of_file)
         list_of_document = []
         z = 0
@@ -62,7 +64,7 @@ def main():
         print("total sentence = "+str(z))
         end = time.time()
         print("total time = "+str(end-start))
-        print("it take a "+str(z/(end-start))+"sentences/second")
+        print(str(z/(end-start))+" sentences/second")
     # path_of_file = '../Data/pg25990.txt'
     # sentences, list_of_sentences = get_word_to_list(path_of_file)
     # x = find_same_cluster(list_of_sentences[1],4)
