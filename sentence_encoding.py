@@ -5,6 +5,7 @@ from edit_distance import stringdist
 import multiprocessing as mp
 from sentence_lib import get_word_from_document
 import mysql.connector
+import time
 document_queue = mp.Queue()
 
 
@@ -19,23 +20,37 @@ def read_from_file(args):
     sentences,list_of_words = get_word_from_document(data)
 
     document_queue.put((args,sentences,list_of_words))
+def read_from_db(args):
+    cnx = mysql.connector.connect(user='root', password='',host='localhost',database='similarity_search')
+    # print (args[0])
+    cursor = cnx.cursor()
+    sql = "Select * from book where book_name = %s AND %s"
+
+    cursor.execute(sql,(args,1))
+    # print (cursor)
+    for i in cursor:
+        sentences,list_of_words = get_word_from_document(i[2])
+
+        document_queue.put((args,sentences,list_of_words))
 
 
 def main():
 
         print(os.getpid())
         list_name_of_file = []
-        for i in range(2):
-            if i%2 == 0:
-                list_name_of_file+=['pg25990.txt']
-            else:
-                list_name_of_file+=['pg706.txt']
+        for i in range(100):
+            # if i%2 == 0:
+            list_name_of_file+=['pg25990.txt']
 
         # list_name_of_file = ['pg25990.txt','pg706.txt']
+        start = time.time()
         # read_from_file(list_name_of_file[0])
-        print(len(list_name_of_file))
+        # read_from_db(list_name_of_file)
+
+        print("NUMBER OF FILE = "+str(len(list_name_of_file)))
         pool = mp.Pool(mp.cpu_count())
-        pool.map(read_from_file,list_name_of_file)
+        pool.map(read_from_db,list_name_of_file)
+        #pool.map(read_from_file,list_name_of_file)
         list_of_document = []
         z = 0
         for i in range(len(list_name_of_file)):
@@ -43,8 +58,11 @@ def main():
 
             z += len(list_of_document[i][2])
             # list_of_words = uniq_word(list/_of_words)
-        # print(list_of_document[0][0])
-        print(z)
+        # # print(list_of_document[0][0])
+        print("total sentence = "+str(z))
+        end = time.time()
+        print("total time = "+str(end-start))
+        print("it take a "+str(z/(end-start))+"sentences/second")
     # path_of_file = '../Data/pg25990.txt'
     # sentences, list_of_sentences = get_word_to_list(path_of_file)
     # x = find_same_cluster(list_of_sentences[1],4)
