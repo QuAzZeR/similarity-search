@@ -4,6 +4,7 @@ import math
 import multiprocessing as mp
 import os
 import time
+import sqlite3
 
 from clustering_lib import find_cluster
 from edit_distance import stringdist
@@ -119,9 +120,10 @@ def cal_distant_sequential(args):#(search_sentence_encoding,list_of_sentences_en
     #     ans[i] = (list_of_sentences_encoding[i][2],1-cosine_distance(search_sentence_encoding,list_of_sentences_encoding[i][3]))
     #     print (ans[i])
     # print (args)
-    x = ast.literal_eval(args[1])
+    # x = ast.literal_eval(args[1])
+    x =args[1]
     # print (x[3])
-    parallel_dist = 1-cosine_distance(args[0],x[3])
+    parallel_dist = 1-cosine_distance(args[0],ast.literal_eval(x[3]))
     # print (parallel_dist)
     # parallel_dist = 1-cosine_distance(args[0],args[1][3])
     # print (parallel_dist)
@@ -132,12 +134,14 @@ def cal_distant_sequential(args):#(search_sentence_encoding,list_of_sentences_en
 
     # else:
 
+
 def main():
     # print(os.getpid())
     # path_of_file = '../Data/pg25990.txt'
 
     # print (len(list_of_sentences_encoding))
-    pool = mp.Pool(mp.cpu_count())
+    start_all  =time.time()
+    # pool = mp.Pool(mp.cpu_count())
 
 
 
@@ -147,16 +151,16 @@ def main():
     # print(sentence,sentence_with_word)
     # time.sleep(1.0)
     search_sentence_with_encoding = find_cluster(sentence_with_word[0],4)
-    list_of_sentences_encoding = read_from_file('./test_prepare.txt')
-    print("FINISHED READ FILE")
+    # list_of_sentences_encoding = read_from_file('./test_prepare.txt')
+    # print("FINISHED READ FILE")
     # list_of_distance = read_from_file('./test_prepare.txt',search_sentence_with_encoding)
     # number_of_sentence = len(list_of_sentences_encoding)
     # print (list_of_sentences_encoding[0])
 
-    list_for_parallel = [(search_sentence_with_encoding,list_of_sentences_encoding[i],i) for i in range(len(list_of_sentences_encoding))]
-    print("FINISHED PREPARE FILE")
-    SIZE = len(list_for_parallel)
-    print ("SIZE  = " +str(SIZE))
+    # list_for_parallel = [(search_sentence_with_encoding,list_of_sentences_encoding[i],i) for i in range(len(list_of_sentences_encoding))]
+    # print("FINISHED PREPARE FILE")
+    # SIZE = len(list_for_parallel)
+
     # print (list_for_parallel[0][1])
 
 
@@ -177,19 +181,34 @@ def main():
     #     i.start()
     #     i.join()
     # print
-    print("SEQUENTIAL")
-    list_of_distance = [cal_distant_sequential(i) for i in list_for_parallel]
 
+
+    # for i in c.execute("SELECT * FROM sentence_encoding"):
+    print("SEQUENTIAL")
+    conn  = sqlite3.connect('sentence_encoding.db')
+    c = conn.cursor()
+    # list_of_distance = [cal_distant_sequential(i) for i in list_for_parallel]
+    list_of_distance = [cal_distant_sequential((search_sentence_with_encoding,i)) for i in c.execute("SELECT * FROM sentence_encoding")]
+
+    conn.close()
     end = time.time()
     print("FINISHED RUN")
+    SIZE = len(list_of_distance)
+    print ("SIZE  = " +str(SIZE))
     # print(list_of_distance[0])
+    print("compare similarity = "+str(end-start))
     list_of_distance = sorted(list_of_distance,key = lambda x: -x[1])
+
+    # def cal_distance_with_sqlite(search_sentence_encoding):
+
 
     # print(list_of_distance[0])
     #     list_of_distance.append(x)
-    print(end-start)
+
     print(SIZE/(end-start))
     print_(list_of_distance,3)
+    end_all = time.time()
+    print("All Process = "+str(end_all-start_all))
     # for i in list_of_distance:
     #     print (i)
 
