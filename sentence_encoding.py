@@ -32,6 +32,7 @@ def read_from_db(args):
         sentences,list_of_words = get_word_from_document(i[2])
 
         document_queue.put((args,sentences,list_of_words))
+    cnx.close()
 
 
 def main():
